@@ -1,0 +1,8 @@
+2023/08/13 22:03:02 Failed to create user: rpc error: code = Canceled desc = grpc: the client connection is closing
+2023/08/13 22:03:02 Internal Server Error: rpc error: code = Canceled desc = grpc: the client connection is closing
+2023/08/13 22:19:35 Failed to protobuf decode data into Go structure
+2023/08/13 22:20:04 Failed to start server: listen tcp 0.0.0.0:8080: bind: address already in use
+2023/08/13 22:30:01 Failed to protobuf decode data into Go structure
+2023/08/13 22:31:22 Failed to protobuf decode data into Go structure
+2023/08/13 23:02:27 Failed to start server: listen tcp 0.0.0.0:8080: bind: address already in use
+2023/08/13 23:07:19 Failed to protobuf decode data into Go structure: json: cannot unmarshal object into Go value of type int

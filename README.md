@@ -10,7 +10,6 @@
 - Uses the [chi router](https://github.com/go-ch/chi) for handling incoming public HTTP requests
 
 -------------
--------------
 ### Helpdesk has below services:
 
 - [Proto](https://github.com/dzwiedz90/helpdesk-proto)
@@ -21,6 +20,19 @@
 - [service-users](https://github.com/dzwiedz90/helpdesk-service-users) - to manage users
 
 -------------
+### Configuration before first run
+- git pull origin master
+- set up Postgres database
+- create .env file and fill it with information as in the example below which will be loaded to the app's config:
+```
+HTTPAddress=0.0.0.0
+HTTPPort=8080
+Timeout=5
+UsersGRPCPort=5002
+UsersGRPCAddress=0.0.0.0
+```
+- run app using run.sh file or with command ```go build -o helpdesk-service-frontend main.go && ./helpdesk-service-frontend | tee logs/console.log```
+
 -------------
 ## Endpoints
 ### Users

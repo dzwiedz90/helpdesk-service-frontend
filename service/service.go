@@ -2,11 +2,13 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
 	pb "github.com/dzwiedz90/helpdesk-proto/services/users"
 	"github.com/dzwiedz90/helpdesk-service-frontend/config"
+	"github.com/dzwiedz90/helpdesk-service-frontend/logs"
 	"github.com/dzwiedz90/helpdesk-service-frontend/pkg/users"
 )
 
@@ -35,6 +37,7 @@ func NewHandlers(r *Repository) {
 func (m *Repository) CreateUser(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to read request's body: %v", err))
 		http.Error(w, "Failed to read request's body", http.StatusInternalServerError)
 		return
 	}
@@ -43,6 +46,7 @@ func (m *Repository) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	err = json.Unmarshal(body, user)
 	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to protobuf decode data into Go structure: %v", err))
 		http.Error(w, "Failed to protobuf decode data into Go structure", http.StatusBadRequest)
 		return
 	}
@@ -62,6 +66,8 @@ func (m *Repository) CreateUser(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write(out)
+
+		logs.ErrorLogger(fmt.Sprintf("Internal Server Error: %v", err))
 		return
 	}
 
@@ -74,6 +80,59 @@ func (m *Repository) CreateUser(w http.ResponseWriter, r *http.Request) {
 	out, _ := json.MarshalIndent(jsonResp, "", "    ")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	w.Write(out)
+	return
+}
+
+type UserID struct {
+	ID int `json:"id"`
+}
+
+func (m *Repository) GetUser(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to read request's body: %v", err))
+		http.Error(w, "Failed to read request's body", http.StatusInternalServerError)
+		return
+	}
+
+	var userID UserID
+
+	err = json.Unmarshal(body, &userID)
+	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to protobuf decode data into Go structure: %v", err))
+		http.Error(w, "Failed to protobuf decode data into Go structure", http.StatusBadRequest)
+		return
+	}
+
+	req := pb.GetUserRequest{
+		Id: int64(userID.ID),
+	}
+
+	resp, err := m.UsersClient.GetUser(r.Context(), &req)
+	if err != nil {
+		jsonResp := createUserResponse{
+			Code:    500,
+			Message: err.Error(),
+		}
+
+		out, _ := json.MarshalIndent(jsonResp, "", "    ")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(out)
+
+		logs.ErrorLogger(fmt.Sprintf("Internal Server Error: %v", err))
+		return
+	}
+
+	jsonResp := getUserResponse{
+		Code:            200,
+		GetUserResponse: *resp,
+	}
+
+	out, _ := json.MarshalIndent(jsonResp, "", "    ")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	w.Write(out)
 	return
 }
