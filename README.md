@@ -34,36 +34,113 @@ UsersGRPCAddress=0.0.0.0
 - run app using run.sh file or with command ```go build -o helpdesk-service-frontend main.go && ./helpdesk-service-frontend | tee logs/console.log```
 
 -------------
-## Endpoints
-### Users
+### Endpoints
 ---
+---
+## USER
+
 ### POST /users/user.create
 Endpoint used to create a new user</br>
-Request:
+Example request:
 ```json
 {
-    "username": "james.kirk",
-    "password": "password",
-    "email": "james.kirk@helpdesk.com",
-    "firstName": "James",
-    "lastName": "Kirk",
-    "age": 32,
+    "username": "mr.spock",
+    "password": "k1rkSuckZ",
+    "email": "mr.spock@federation.com",
+    "firstName": "Mr",
+    "lastName": "Spock",
+    "age": 89,
     "gender": "male",
     "address": {
-        "street": "Teststreet 8",
-        "city": "Somecity",
-        "postalCode": "2137",
-        "Country": "USA"
+        "street": "Valcanioan 69",
+        "city": "Voclanium",
+        "postal_code": "2137",
+        "country": "Volcan"
     }
 }
 ```
-Response:
+Example response:
 ```json
 {
     "code": 200,
     "message": "User created",
     "createUserResponse": {
         "id": 1
+    }
+}
+```
+
+---
+### GET /users/user.get
+Endpoint used to get user by id</br>
+Example request:
+```json
+{
+     "id": 12
+}
+```
+Example response:
+```json
+{
+    "code": 200,
+    "message": "",
+    "getUserResponse": {
+        "user": {
+            "username": "mr.spock",
+            "email": "mr.spock@federation.com",
+            "firstName": "Mr",
+            "lastName": "Spock",
+            "age": 89,
+            "gender": "male",
+            "address": {
+                "street": "Valcanioan 69",
+                "city": "Voclanium",
+                "country": "Volcan"
+            }
+        }
+    }
+}
+```
+
+---
+### GET /users/user.get_all
+Endpoint used to get all users</br>
+Example response:
+```json
+{
+    "code": 200,
+    "message": "",
+    "getAllUsersResponse": {
+        "users": [
+            {
+                "user_id": 1,
+                "username": "james.kirk",
+                "email": "james.kirk@federation.com",
+                "firstName": "James",
+                "lastName": "Kirk",
+                "age": 32,
+                "gender": "male",
+                "address": {
+                    "street": "Spocksuckz 2137",
+                    "city": "Somecity",
+                    "country": "Earth"
+                }
+            },
+            {
+                "user_id": 2,
+                "username": "mr.spock",
+                "email": "mr.spock@federation.com",
+                "firstName": "Mr",
+                "lastName": "Spock",
+                "age": 99,
+                "gender": "male",
+                "address": {
+                    "street": "Kirksuckz 69",
+                    "city": "Somecity",
+                    "country": "Volcan"
+                }
+            }
+        ]
     }
 }
 ```

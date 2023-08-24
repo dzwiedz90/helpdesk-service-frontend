@@ -15,3 +15,15 @@ type getUserResponse struct {
 	Message         string             `json:"message"`
 	GetUserResponse pb.GetUserResponse `json:"getUserResponse"`
 }
+
+type getAllUsersResponse struct {
+	Code                int                    `json:"code"`
+	Message             string                 `json:"message"`
+	GetAllUsersResponse pb.GetAllUsersResponse `json:"getAllUsersResponse"`
+}
+
+type updateUserResponse struct {
+}
+
+type deleteUserResponse struct {
+}

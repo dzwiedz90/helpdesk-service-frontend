@@ -86,6 +86,9 @@ func routes(app *config.Config) http.Handler {
 	mux.Route("/users", func(mux chi.Router) {
 		mux.Post("/user.create", service.Repo.CreateUser)
 		mux.Get("/user.get", service.Repo.GetUser)
+		mux.Get("/user.get_all", service.Repo.GetAllUsers)
+		mux.Get("/user.update", service.Repo.UpdateUser)
+		mux.Get("/user.delete", service.Repo.DeleteUser)
 	})
 
 	return mux

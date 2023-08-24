@@ -136,3 +136,40 @@ func (m *Repository) GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Write(out)
 	return
 }
+
+func (m *Repository) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	req := pb.GetAllUsersRequest{}
+
+	resp, err := m.UsersClient.GeAlltUsers(r.Context(), &req)
+	if err != nil {
+		jsonResp := createUserResponse{
+			Code:    500,
+			Message: err.Error(),
+		}
+
+		out, _ := json.MarshalIndent(jsonResp, "", "    ")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(out)
+
+		logs.ErrorLogger(fmt.Sprintf("Internal Server Error: %v", err))
+		return
+	}
+
+	jsonResp := getAllUsersResponse{
+		Code:                200,
+		GetAllUsersResponse: *resp,
+	}
+
+	out, _ := json.MarshalIndent(jsonResp, "", "    ")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(out)
+	return
+}
+
+func (m *Repository) UpdateUser(w http.ResponseWriter, r *http.Request) {
+}
+
+func (m *Repository) DeleteUser(w http.ResponseWriter, r *http.Request) {
+}
