@@ -111,7 +111,7 @@ func (m *Repository) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := m.UsersClient.GetUser(r.Context(), &req)
 	if err != nil {
-		jsonResp := createUserResponse{
+		jsonResp := getUserResponse{
 			Code:    500,
 			Message: err.Error(),
 		}
@@ -142,7 +142,7 @@ func (m *Repository) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := m.UsersClient.GeAlltUsers(r.Context(), &req)
 	if err != nil {
-		jsonResp := createUserResponse{
+		jsonResp := getAllUsersResponse{
 			Code:    500,
 			Message: err.Error(),
 		}
@@ -169,7 +169,101 @@ func (m *Repository) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to read request's body: %v", err))
+		http.Error(w, "Failed to read request's body", http.StatusInternalServerError)
+		return
+	}
+
+	user := &pb.User{}
+
+	err = json.Unmarshal(body, user)
+	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to protobuf decode data into Go structure: %v", err))
+		http.Error(w, "Failed to protobuf decode data into Go structure", http.StatusBadRequest)
+		return
+	}
+
+	req := pb.UpdateUserRequest{
+		User: user,
+	}
+
+	resp, err := m.UsersClient.UpdateUser(r.Context(), &req)
+	if err != nil {
+		jsonResp := updateUserResponse{
+			Code:    500,
+			Message: err.Error(),
+		}
+
+		out, _ := json.MarshalIndent(jsonResp, "", "    ")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(out)
+
+		logs.ErrorLogger(fmt.Sprintf("Internal Server Error: %v", err))
+		return
+	}
+
+	jsonResp := updateUserResponse{
+		Code:                200,
+		Message:             "User updated",
+		UpdateUsersResponse: *resp,
+	}
+
+	out, _ := json.MarshalIndent(jsonResp, "", "    ")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(out)
+	return
 }
 
 func (m *Repository) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to read request's body: %v", err))
+		http.Error(w, "Failed to read request's body", http.StatusInternalServerError)
+		return
+	}
+
+	var userID UserID
+
+	err = json.Unmarshal(body, &userID)
+	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to protobuf decode data into Go structure: %v", err))
+		http.Error(w, "Failed to protobuf decode data into Go structure", http.StatusBadRequest)
+		return
+	}
+
+	req := pb.DeleteUserRequest{
+		Id: int64(userID.ID),
+	}
+
+	resp, err := m.UsersClient.DeleteUser(r.Context(), &req)
+	if err != nil {
+		jsonResp := deleteUserResponse{
+			Code:    500,
+			Message: err.Error(),
+		}
+
+		out, _ := json.MarshalIndent(jsonResp, "", "    ")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(out)
+
+		logs.ErrorLogger(fmt.Sprintf("Internal Server Error: %v", err))
+		return
+	}
+
+	jsonResp := deleteUserResponse{
+		Code:                200,
+		Message:             "User deleted",
+		DeleteUsersResponse: *resp,
+	}
+
+	out, _ := json.MarshalIndent(jsonResp, "", "    ")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(out)
+	return
 }

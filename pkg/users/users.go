@@ -89,9 +89,37 @@ func (c *UsersClient) GeAlltUsers(ctx context.Context, req *pb.GetAllUsersReques
 }
 
 func (c *UsersClient) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
-	return nil, nil
+	conn, err := c.CreateConn()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := pb.NewUsersServiceClient(conn)
+
+	res, err := client.UpdateUser(ctx, req)
+	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to get all user: %v", err))
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (c *UsersClient) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
-	return nil, nil
+	conn, err := c.CreateConn()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	client := pb.NewUsersServiceClient(conn)
+
+	res, err := client.DeleteUser(ctx, req)
+	if err != nil {
+		logs.ErrorLogger(fmt.Sprintf("Failed to get all user: %v", err))
+		return nil, err
+	}
+
+	return res, nil
 }

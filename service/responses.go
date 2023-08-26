@@ -23,7 +23,13 @@ type getAllUsersResponse struct {
 }
 
 type updateUserResponse struct {
+	Code                int                   `json:"code"`
+	Message             string                `json:"message"`
+	UpdateUsersResponse pb.UpdateUserResponse `json:"updateUserResponse"`
 }
 
 type deleteUserResponse struct {
+	Code                int                   `json:"code"`
+	Message             string                `json:"message"`
+	DeleteUsersResponse pb.DeleteUserResponse `json:"deleteUserResponse"`
 }
