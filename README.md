@@ -144,3 +144,52 @@ Example response:
     }
 }
 ```
+
+---
+### PUT /users/user.update
+Endpoint used to update user with for the given id</br>
+Example response:
+```json
+{
+    "user_id": 1,
+    "username": "scotty",
+    "password": "k1rk@ndSp0cKSuckZ",
+    "email": "scotty@federation.com",
+    "firstName": "Montgomery",
+    "lastName": "Scott",
+    "age": 45,
+    "gender": "male",
+    "address": {
+        "street": "Dark Dashwood 87",
+        "city": "Glasgow",
+        "postal_code": "A23 CE1",
+        "country": "Scotland"
+    }
+}
+```
+Example response:
+```json
+{
+    "code": 200,
+    "message": "User updated",
+    "updateUserResponse": {}
+}
+```
+
+---
+### PUT /users/user.delete
+Endpoint used to delete user by the given id</br>
+Example response:
+```json
+{
+    "id": 19
+}
+```
+Example response:
+```json
+{
+    "code": 200,
+    "message": "User deleted",
+    "deleteUserResponse": {}
+}
+```
